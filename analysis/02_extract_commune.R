@@ -51,11 +51,11 @@ for (i in layers) {
 }
 
 #3. Export extracted information
-file_out <- here::here("data", "derived-data", "commune_gis.csv")
-
+# remove geometry information
 out <- out[, !names(out) %in% "geom"]
+# save the output as csv file
 write.csv(
   data.frame(out),
-  file_out,
+  file.path(out_folder, "commune_gis.csv"),
   row.names = FALSE
 )

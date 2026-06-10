@@ -27,7 +27,7 @@ fr_box <- sf::st_bbox(
   sf::st_as_sfc() |>
   sf::st_as_sf()
 
-# 1. IGN data and ADMINEXPRESS --------------------
+# 1. IGN data and ADMINEXPRESS (470Mb) --------------------
 
 # check out all available information in ign servers
 # meta_vect <- get_layers_metadata("wfs") # all layers for altimetrie wms
@@ -46,7 +46,7 @@ st_write(
 )
 
 
-# 2. Chelsa climate data ------------------------
+# 2. Chelsa climate data (23Mb) ------------------------
 # https://www.chelsa-climate.org/datasets/chelsa_bioclim
 # you can click and download individual files
 # e.g. "https://os.unil.cloud.switch.ch/chelsa02/chelsa/global/bioclim/bio01/1981-2010/CHELSA_bio01_1981-2010_V.2.1.tif"
@@ -67,7 +67,7 @@ for (i in biomclim_select) {
   writeRaster(crop_i, file.path(datadir, file_i))
 }
 
-# 3. Soil grid data --------------------------------
+# 3. Soil grid data (30Mb) --------------------------------
 # same here you can click and download file online: https://soilgrids.org/
 # but you can also automate it
 soilgrid_select <- c("phh2o", "wv0033")

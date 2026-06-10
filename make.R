@@ -32,5 +32,5 @@ if (!requireNamespace("happign", quietly = TRUE)) {
 # 1. Get the raw data
 source(here::here("analysis", "01_get_data.R"))
 
-# 2. Get megatrends per data sources
+# 2. Get landscape variables per commune
 source(here::here("analysis", "02_extract_commune.R"))
