@@ -2,7 +2,6 @@
 
 Code and data used to extracting landscape variables in France 
 
-
 ## General
 
 This repository is structured as follow:

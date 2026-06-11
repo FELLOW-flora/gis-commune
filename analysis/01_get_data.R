@@ -37,13 +37,14 @@ fr_box <- sf::st_bbox(
 # meta_vect$Name[found]
 
 # Download commune from 2025
-adm_2025 <- get_wfs(fr_box, layer = "ADMINEXPRESS-COG.2025:commune")
+fileout <- file.path(datadir, "ADMINEXPRESS_COG_2025_commune.gpkg")
+if (!file.exists(fileout)) {
+  # get data from happign
+  adm_2025 <- get_wfs(fr_box, layer = "ADMINEXPRESS-COG.2025:commune")
 
-# export as geopackage
-st_write(
-  adm_2025,
-  file.path(datadir, "ADMINEXPRESS_COG_2025_commune.gpkg")
-)
+  # export as geopackage
+  st_write(adm_2025, fileout)
+}
 
 
 # 2. Chelsa climate data (23Mb) ------------------------
@@ -56,15 +57,18 @@ url_bioclim <- "https://os.unil.cloud.switch.ch/chelsa02/chelsa/global/bioclim/b
 biomclim_select <- c("01", "04", "12", "15")
 
 for (i in biomclim_select) {
-  # add vsicurl to download only subset
-  urli <- paste0("/vsicurl/", gsub("XX", i, url_bioclim))
-  # is much faster with 'vsicurl' (no need to download all data)
-  chelsa_i <- terra::rast(urli)
-  # crop to the extent of intest
-  crop_i <- terra::crop(chelsa_i, fr_box)
-  # export
   file_i <- paste0("CHELSA_bioclim_", i, "_1981-2010_Fr.tif")
-  writeRaster(crop_i, file.path(datadir, file_i))
+  fileout <- file.path(datadir, file_i)
+  if (!file.exists(fileout)) {
+    # add vsicurl to download only subset
+    urli <- paste0("/vsicurl/", gsub("XX", i, url_bioclim))
+    # is much faster with 'vsicurl' (no need to download all data)
+    chelsa_i <- terra::rast(urli)
+    # crop to the extent of intest
+    crop_i <- terra::crop(chelsa_i, fr_box)
+    # export
+    writeRaster(crop_i, fileout)
+  }
 }
 
 # 3. Soil grid data (30Mb) --------------------------------
@@ -74,9 +78,12 @@ soilgrid_select <- c("phh2o", "wv0033")
 depth <- "0-5cm_mean"
 sg_url <- "https://maps.isric.org/mapserv?map=/map/VV.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=VV_DD&FORMAT=image/tiff&SUBSET=long(-5,10)&SUBSET=lat(40,55)&SUBSETTINGCRS=http://www.opengis.net/def/crs/EPSG/0/4326&OUTPUTCRS=http://www.opengis.net/def/crs/EPSG/0/4326"
 for (i in soilgrid_select) {
-  # add vsicurl to download only subset
-  urli <- gsub("VV", i, gsub("DD", depth, sg_url))
-
   file_i <- paste0("SOILGRID_", i, "_Fr.tif")
-  download.file(urli, file.path(datadir, file_i), mode = "wb")
+  fileout <- file.path(datadir, file_i)
+  if (!file.exists(fileout)) {
+    # update url
+    urli <- gsub("VV", i, gsub("DD", depth, sg_url))
+    # download the file
+    download.file(urli, fileout, mode = "wb")
+  }
 }
